@@ -1,0 +1,181 @@
+---
+import '../styles/global.css';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import LiveIndicator from '../components/LiveIndicator.astro';
+import { adsConfigured, adsenseClient } from '../site';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonicalPath?: string;
+  ogType?: 'website' | 'article';
+  ogImage?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  noindex?: boolean;
+  extraJsonLd?: Record<string, unknown>;
+}
+
+const {
+  title,
+  description = 'DevActivity - learning Rust in public. Step-by-step Rust notes, code, and companion videos.',
+  canonicalPath,
+  ogType = 'website',
+  ogImage = '/favicon.svg',
+  publishedTime,
+  modifiedTime,
+  noindex = false,
+  extraJsonLd,
+} = Astro.props;
+
+const site = Astro.site ?? new URL('https://dev-blog.pages.dev');
+const canonical = new URL(canonicalPath ?? Astro.url.pathname, site).toString();
+const ogImageUrl = new URL(ogImage, site).toString();
+
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'DevActivity',
+  url: site.toString(),
+  description,
+  inLanguage: 'en',
+  author: {
+    '@type': 'Person',
+    name: 'devactivity',
+    url: 'https://github.com/devactivity',
+    sameAs: [
+      'https://www.youtube.com/@devactivity',
+      'https://github.com/devactivity',
+      'https://tiktok.com/@devreactivity',
+      'https://twitter.com/fndevactivity',
+      'https://www.instagram.com/devactivity/',
+    ],
+  },
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
+    <meta name="author" content="devactivity" />
+    <meta name="theme-color" content="#faf6ec" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e0f11" media="(prefers-color-scheme: dark)" />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content="DevActivity" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title="DevActivity RSS" href={new URL('/rss.xml', site).toString()} />
+    {adsConfigured && (
+      <script
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
+        crossorigin="anonymous"
+      ></script>
+    )}
+    <script is:inline>
+      try {
+        const t = localStorage.getItem('theme');
+        if (t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch {}
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <script type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)} />
+    {extraJsonLd && <script type="application/ld+json" set:html={JSON.stringify(extraJsonLd)} />}
+  </head>
+  <body class="min-h-screen antialiased overflow-x-clip">
+    <div class="mx-auto w-full max-w-6xl min-w-0 px-4 sm:px-6">
+      <header class="border-b-2 border-current py-4">
+        <div class="flex items-center justify-between gap-3">
+          <a href="/" class="flex min-w-0 items-center gap-3" aria-label="DevActivity home">
+            <span class="hanko h-10 w-10 shrink-0 text-sm rounded-[3px]" aria-hidden="true">DEV</span>
+            <span class="min-w-0 leading-none">
+              <span class="block truncate font-black tracking-tight text-base sm:text-lg">ACTIVITY</span>
+              <span class="block truncate text-[10px] sm:text-xs tracking-[0.25em] opacity-70">LEARN RUST IN PUBLIC</span>
+            </span>
+          </a>
+          <div class="flex shrink-0 items-center gap-2">
+            <nav class="hidden md:flex items-center gap-5 text-sm font-bold" aria-label="Primary">
+              <a href="/" class="hover:opacity-70">HOME</a>
+              <a href="/blog" class="hover:opacity-70">POSTS</a>
+              <a href="https://www.youtube.com/@devactivity" target="_blank" rel="noopener" class="hover:opacity-70">YOUTUBE</a>
+              <a href="https://github.com/devactivity" target="_blank" rel="noopener" class="hover:opacity-70">GITHUB</a>
+              <a href="/rss.xml" class="hover:opacity-70">RSS</a>
+            </nav>
+            <ThemeToggle />
+            <button
+              id="menu-toggle"
+              type="button"
+              aria-label="Toggle menu"
+              aria-expanded="false"
+              aria-controls="mobile-menu"
+              class="md:hidden border-2 border-current rounded px-3 py-1.5 text-sm font-bold"
+            >
+              MENU
+            </button>
+          </div>
+        </div>
+        <nav id="mobile-menu" class="hidden md:hidden mt-4 flex-col gap-1 text-sm font-bold border-t border-current/15 pt-3" aria-label="Mobile">
+          <a href="/" class="block rounded px-2 py-2 hover:opacity-70">HOME</a>
+          <a href="/blog" class="block rounded px-2 py-2 hover:opacity-70">POSTS</a>
+          <a href="https://www.youtube.com/@devactivity" target="_blank" rel="noopener" class="block rounded px-2 py-2 hover:opacity-70">YOUTUBE</a>
+          <a href="https://github.com/devactivity" target="_blank" rel="noopener" class="block rounded px-2 py-2 hover:opacity-70">GITHUB</a>
+          <a href="/rss.xml" class="block rounded px-2 py-2 hover:opacity-70">RSS</a>
+        </nav>
+      </header>
+
+      <LiveIndicator />
+
+      <main class="min-w-0 py-8">
+        <slot />
+      </main>
+
+      <footer class="border-t-2 border-current py-6 mb-8">
+        <div class="flex flex-col sm:flex-row flex-wrap items-start sm:items-end justify-between gap-4">
+          <div class="min-w-0 text-sm">
+            <p class="font-black text-lg break-words">DEVACTIVITY - LEARN IN PUBLIC</p>
+            <p class="opacity-70 break-words">Not an expert, just a learner.</p>
+          </div>
+          <div class="text-left sm:text-right text-sm font-bold">
+            <p>2026</p>
+            <p class="opacity-60 font-normal">Rust notes, code, and videos</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <script is:inline>
+      const menuBtn = document.getElementById('menu-toggle');
+      const menu = document.getElementById('mobile-menu');
+      menuBtn?.addEventListener('click', () => {
+        if (!menu) return;
+        const nowHidden = menu.classList.toggle('hidden');
+        menu.classList.toggle('flex', !nowHidden);
+        menuBtn.setAttribute('aria-expanded', String(!nowHidden));
+        menuBtn.textContent = !nowHidden ? 'CLOSE' : 'MENU';
+      });
+    </script>
+  </body>
+</html>
