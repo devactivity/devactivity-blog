@@ -1,0 +1,60 @@
+---
+import status from '../data/live-status.json';
+
+interface LiveEntry {
+  videoId: string;
+  title: string;
+  url: string;
+  startTime?: number;
+}
+
+const live = (status as { live?: LiveEntry | null }).live ?? null;
+const upcoming = (status as { upcoming?: LiveEntry | null }).upcoming ?? null;
+
+function fmtWhen(epochSeconds?: number): string {
+  if (!epochSeconds) return '';
+  try {
+    return (
+      new Date(epochSeconds * 1000).toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        timeZone: 'UTC',
+      }) + ' UTC'
+    );
+  } catch {
+    return '';
+  }
+}
+---
+{live ? (
+  <div class="mt-4 flex justify-center">
+    <a
+      href={live.url}
+      target="_blank"
+      rel="noopener"
+      class="inline-flex max-w-full items-center gap-2.5 rounded-full border-2 border-shu bg-shu px-4 py-2 text-sm font-black text-white shadow hover:opacity-90 transition-opacity"
+      aria-label={`Live now on YouTube: ${live.title}`}
+    >
+      <span class="live-dot inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-white" aria-hidden="true"></span>
+      <span class="tracking-widest">LIVE NOW</span>
+      <span class="hidden sm:inline max-w-64 truncate font-bold opacity-90">{live.title}</span>
+    </a>
+  </div>
+) : upcoming ? (
+  <div class="mt-4 flex justify-center">
+    <a
+      href={upcoming.url}
+      target="_blank"
+      rel="noopener"
+      class="inline-flex max-w-full items-center gap-2.5 rounded-full border-2 border-current px-4 py-2 text-sm font-black hover:opacity-70 transition-opacity"
+      aria-label={`Scheduled stream on YouTube: ${upcoming.title}`}
+    >
+      <span class="hanko rounded-[3px] px-1.5 py-0.5 text-[10px]" aria-hidden="true">SOON</span>
+      <span class="tracking-widest">SCHEDULED{upcoming.startTime ? ` • ${fmtWhen(upcoming.startTime)}` : ''}</span>
+      <span class="hidden sm:inline max-w-64 truncate font-bold opacity-70">{upcoming.title}</span>
+    </a>
+  </div>
+) : null}

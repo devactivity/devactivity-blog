@@ -1,0 +1,19 @@
+---
+---
+<button
+  id="theme-toggle"
+  type="button"
+  aria-label="Toggle dark mode"
+  class="shrink-0 border-2 border-current rounded px-3 py-1.5 text-sm font-bold hover:opacity-70 transition-opacity"
+>
+  <span class="hidden dark:inline">LIGHT</span>
+  <span class="dark:hidden">DARK</span>
+</button>
+<script is:inline>
+  const btn = document.getElementById('theme-toggle');
+  btn?.addEventListener('click', () => {
+    const el = document.documentElement;
+    const dark = el.classList.toggle('dark');
+    try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch {}
+  });
+</script>
