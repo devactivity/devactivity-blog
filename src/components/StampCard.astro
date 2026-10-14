@@ -1,0 +1,45 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const d = post.data.pubDate;
+const dateStr = d.toISOString().slice(0, 10);
+const hasVideo = Boolean(post.data.youtubeId || post.data.tiktokId);
+---
+<a href={`/blog/${post.id.replace(/\.mdx?$/, '')}/`} class="block group min-w-0">
+  <div class="stamp-frame rounded-[2px]">
+    <div class="stamp-inner p-0 overflow-hidden dark:bg-[#17181c]">
+      <div class="p-4 sm:p-5 min-w-0">
+        <div class="flex items-start justify-between gap-3 sm:gap-4 min-w-0">
+          <div class="min-w-0">
+            {post.data.category && (
+              <p class="font-black text-ai dark:text-sky text-sm leading-none tracking-[0.2em] break-words">{post.data.category}</p>
+            )}
+            <h3 class="font-display font-extrabold text-xl sm:text-2xl leading-tight mt-1 group-hover:opacity-70 transition-opacity break-words">
+              {post.data.title}
+            </h3>
+          </div>
+          {post.data.no && <span class="shrink-0 font-black text-xl sm:text-2xl tabular-nums">{post.data.no}</span>}
+        </div>
+
+        <p class="mt-3 text-[0.95rem] leading-relaxed opacity-80 line-clamp-3 break-words">{post.data.description}</p>
+
+        <div class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-dashed border-current/20 pt-3 text-xs font-bold">
+          <span class="min-w-0 break-words">
+            {post.data.category ?? 'POST'} • {dateStr}
+            {hasVideo && <span class="ml-2 bg-ink text-paper dark:bg-paper dark:text-ink rounded-full px-2 py-0.5">VIDEO</span>}
+          </span>
+          <span class="flex flex-wrap gap-1.5">
+            {(post.data.tags ?? []).slice(0, 3).map((t) => (
+              <span class="border border-current/30 rounded-full px-2 py-0.5 break-words">{t}</span>
+            ))}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</a>
