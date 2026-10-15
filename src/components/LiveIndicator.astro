@@ -1,5 +1,13 @@
 ---
 import status from '../data/live-status.json';
+import { ui, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'en' } = Astro.props;
+const t = ui[lang];
 
 interface LiveEntry {
   videoId: string;
@@ -39,7 +47,7 @@ function fmtWhen(epochSeconds?: number): string {
       aria-label={`Live now on YouTube: ${live.title}`}
     >
       <span class="live-dot inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-white" aria-hidden="true"></span>
-      <span class="tracking-widest">LIVE NOW</span>
+      <span class="tracking-widest">{t.liveNow}</span>
       <span class="hidden sm:inline max-w-64 truncate font-bold opacity-90">{live.title}</span>
     </a>
   </div>
@@ -52,8 +60,8 @@ function fmtWhen(epochSeconds?: number): string {
       class="inline-flex max-w-full items-center gap-2.5 rounded-full border-2 border-current px-4 py-2 text-sm font-black hover:opacity-70 transition-opacity"
       aria-label={`Scheduled stream on YouTube: ${upcoming.title}`}
     >
-      <span class="hanko rounded-[3px] px-1.5 py-0.5 text-[10px]" aria-hidden="true">SOON</span>
-      <span class="tracking-widest">SCHEDULED{upcoming.startTime ? ` • ${fmtWhen(upcoming.startTime)}` : ''}</span>
+      <span class="hanko rounded-[3px] px-1.5 py-0.5 text-[10px]" aria-hidden="true">{t.soon}</span>
+      <span class="tracking-widest">{t.scheduled}{upcoming.startTime ? ` • ${fmtWhen(upcoming.startTime)}` : ''}</span>
       <span class="hidden sm:inline max-w-64 truncate font-bold opacity-70">{upcoming.title}</span>
     </a>
   </div>

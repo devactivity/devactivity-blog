@@ -4,23 +4,33 @@ import YouTube from '../../components/YouTube.astro';
 import TikTok from '../../components/TikTok.astro';
 import AdSlot from '../../components/AdSlot.astro';
 import { adSlots } from '../../site';
+import { postUrl, slugOf, ui } from '../../i18n';
 import { getCollection, render } from 'astro:content';
 
+const lang = 'en' as const;
+const t = ui[lang];
+
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
-  return posts.map((post) => ({
-    params: { slug: post.id.replace(/\.mdx?$/, '') },
-    props: { post },
-  }));
+  const all = await getCollection('blog', ({ data }) => !data.draft);
+  const posts = all.filter((p) => p.data.lang === 'en');
+  const slugs = new Set(posts.map((p) => slugOf(p.id)));
+  return posts.map((post) => {
+    const slug = slugOf(post.id);
+    const hasId = all.some((p) => p.data.lang === 'id' && slugOf(p.id) === slug);
+    return {
+      params: { slug },
+      props: { post, altPath: hasId ? postUrl('id', slug) : '/id/blog/' },
+    };
+  });
 }
 
-const { post } = Astro.props;
+const { post, altPath } = Astro.props;
 const { Content } = await render(post);
+const slug = slugOf(post.id);
 const date = post.data.pubDate.toISOString().slice(0, 10);
 const updated = post.data.updatedDate?.toISOString() ?? post.data.pubDate.toISOString();
-const slug = post.id.replace(/\.mdx?$/, '');
 const site = Astro.site ?? new URL('https://dev-blog.pages.dev');
-const url = new URL(`/blog/${slug}/`, site).toString();
+const url = new URL(postUrl(lang, slug), site).toString();
 const ogImage = post.data.youtubeId
   ? `https://i.ytimg.com/vi/${post.data.youtubeId}/hqdefault.jpg`
   : '/favicon.svg';
@@ -31,8 +41,8 @@ const author = {
   url: 'https://github.com/devactivity',
   sameAs: [
     'https://www.youtube.com/@devactivity',
+    'https://www.tiktok.com/@devreactivity',
     'https://github.com/devactivity',
-    'https://tiktok.com/@devreactivity',
     'https://twitter.com/fndevactivity',
     'https://www.instagram.com/devactivity/',
   ],
@@ -70,7 +80,7 @@ const articleJsonLd = {
   image: new URL(ogImage, site).toString(),
   datePublished: post.data.pubDate.toISOString(),
   dateModified: updated,
-  inLanguage: post.data.lang ?? 'en',
+  inLanguage: t.inLanguage,
   author,
   publisher: {
     '@type': 'Person',
@@ -86,7 +96,9 @@ const articleJsonLd = {
 <BaseLayout
   title={`${post.data.title} - DevActivity`}
   description={post.data.description}
-  canonicalPath={`/blog/${slug}/`}
+  lang={lang}
+  altPath={altPath}
+  canonicalPath={postUrl(lang, slug)}
   ogType="article"
   ogImage={ogImage}
   publishedTime={post.data.pubDate.toISOString()}
@@ -103,8 +115,8 @@ const articleJsonLd = {
           <span class="break-words">{post.data.category ?? 'POST'} NO.{post.data.no ?? '00'}</span>
           <time datetime={post.data.pubDate.toISOString()}>{date}</time>
           <span class="flex flex-wrap gap-1.5">
-            {(post.data.tags ?? []).map((t) => (
-              <span class="border border-current/30 rounded-full px-2 py-0.5 break-words">#{t}</span>
+            {(post.data.tags ?? []).map((tag) => (
+              <span class="border border-current/30 rounded-full px-2 py-0.5 break-words">#{tag}</span>
             ))}
           </span>
         </div>
@@ -128,7 +140,7 @@ const articleJsonLd = {
       )
     )}
 
-    <AdSlot unit={adSlots.postTop} />
+    <AdSlot unit={adSlots.postTop} label={t.adLabel} />
 
     <div class="mt-8 grid min-w-0 md:grid-cols-[minmax(0,1fr)_56px] gap-8">
       <div class="prose-stamp min-w-0 overflow-hidden bg-white/60 dark:bg-white/5 rounded p-4 sm:p-6 md:p-8 border border-black/10 dark:border-white/10">
@@ -142,11 +154,11 @@ const articleJsonLd = {
       </aside>
     </div>
 
-    <AdSlot unit={adSlots.postBottom} />
+    <AdSlot unit={adSlots.postBottom} label={t.adLabel} />
 
     <div class="mt-8 flex flex-wrap gap-3 justify-between text-sm font-bold">
-      <a href="/blog" class="underline underline-offset-4 hover:opacity-70">BACK TO POSTS</a>
-      <a href="/" class="underline underline-offset-4 hover:opacity-70">HOME</a>
+      <a href="/blog/" class="underline underline-offset-4 hover:opacity-70">{t.backToPosts}</a>
+      <a href="/" class="underline underline-offset-4 hover:opacity-70">{t.home}</a>
     </div>
   </article>
 </BaseLayout>

@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import StampCard from '../../../components/StampCard.astro';
+import AdSlot from '../../../components/AdSlot.astro';
+import { adSlots } from '../../../site';
+import { ui } from '../../../i18n';
+import { getCollection } from 'astro:content';
+
+const lang = 'id' as const;
+const t = ui[lang];
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft && data.lang === lang))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+<BaseLayout title={t.blogIndexTitle} lang={lang} altPath="/blog/" canonicalPath="/id/blog/">
+  <h1 class="font-black text-3xl sm:text-4xl break-words">{t.blogTitle} <span class="text-base font-bold opacity-60">{posts.length} {t.blogTotal}</span></h1>
+  <p class="mt-2 opacity-75 break-words">{t.blogSub}</p>
+  <div class="mt-6 grid min-w-0 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+    {posts.map((p) => <StampCard post={p} lang={lang} />)}
+  </div>
+
+  <AdSlot unit={adSlots.blogIndex} label={t.adLabel} />
+</BaseLayout>

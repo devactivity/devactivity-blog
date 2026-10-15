@@ -3,10 +3,14 @@ import '../styles/global.css';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import LiveIndicator from '../components/LiveIndicator.astro';
 import { adsConfigured, adsenseClient } from '../site';
+import { ui, type Lang } from '../i18n';
 
 interface Props {
   title: string;
   description?: string;
+  lang?: Lang;
+  /** Path of the same page in the other language (for switcher + hreflang). */
+  altPath?: string;
   canonicalPath?: string;
   ogType?: 'website' | 'article';
   ogImage?: string;
@@ -18,7 +22,8 @@ interface Props {
 
 const {
   title,
-  description = 'DevActivity - learning Rust in public. Step-by-step Rust notes, code, and companion videos.',
+  lang = 'en',
+  altPath,
   canonicalPath,
   ogType = 'website',
   ogImage = '/favicon.svg',
@@ -28,9 +33,15 @@ const {
   extraJsonLd,
 } = Astro.props;
 
+const t = ui[lang];
+const description = Astro.props.description ?? t.metaDesc;
+
 const site = Astro.site ?? new URL('https://dev-blog.pages.dev');
 const canonical = new URL(canonicalPath ?? Astro.url.pathname, site).toString();
 const ogImageUrl = new URL(ogImage, site).toString();
+const altUrl = altPath ? new URL(altPath, site).toString() : null;
+const enUrl = lang === 'en' ? canonical : altUrl;
+const idUrl = lang === 'id' ? canonical : altUrl;
 
 const websiteJsonLd = {
   '@context': 'https://schema.org',
@@ -38,15 +49,15 @@ const websiteJsonLd = {
   name: 'DevActivity',
   url: site.toString(),
   description,
-  inLanguage: 'en',
+  inLanguage: t.inLanguage,
   author: {
     '@type': 'Person',
     name: 'devactivity',
     url: 'https://github.com/devactivity',
     sameAs: [
       'https://www.youtube.com/@devactivity',
+      'https://www.tiktok.com/@devreactivity',
       'https://github.com/devactivity',
-      'https://tiktok.com/@devreactivity',
       'https://twitter.com/fndevactivity',
       'https://www.instagram.com/devactivity/',
     ],
@@ -54,13 +65,16 @@ const websiteJsonLd = {
 };
 ---
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {enUrl && <link rel="alternate" hreflang="en" href={enUrl} />}
+    {idUrl && <link rel="alternate" hreflang="id" href={idUrl} />}
+    {enUrl && <link rel="alternate" hreflang="x-default" href={enUrl} />}
     <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
     <meta name="author" content="devactivity" />
     <meta name="theme-color" content="#faf6ec" media="(prefers-color-scheme: light)" />
@@ -68,6 +82,7 @@ const websiteJsonLd = {
 
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content="DevActivity" />
+    <meta property="og:locale" content={t.ogLocale} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -81,14 +96,7 @@ const websiteJsonLd = {
     <meta name="twitter:image" content={ogImageUrl} />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="alternate" type="application/rss+xml" title="DevActivity RSS" href={new URL('/rss.xml', site).toString()} />
-    {adsConfigured && (
-      <script
-        async
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
-        crossorigin="anonymous"
-      ></script>
-    )}
+    <link rel="alternate" type="application/rss+xml" title="DevActivity RSS" href={new URL(lang === 'id' ? '/id/rss.xml' : '/rss.xml', site).toString()} />
     <script is:inline>
       try {
         const t = localStorage.getItem('theme');
@@ -103,6 +111,13 @@ const websiteJsonLd = {
       href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    {adsConfigured && (
+      <script
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`}
+        crossorigin="anonymous"
+      ></script>
+    )}
     <script type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)} />
     {extraJsonLd && <script type="application/ld+json" set:html={JSON.stringify(extraJsonLd)} />}
   </head>
@@ -110,22 +125,35 @@ const websiteJsonLd = {
     <div class="mx-auto w-full max-w-6xl min-w-0 px-4 sm:px-6">
       <header class="border-b-2 border-current py-4">
         <div class="flex items-center justify-between gap-3">
-          <a href="/" class="flex min-w-0 items-center gap-3" aria-label="DevActivity home">
+          <a href={lang === 'id' ? '/id/' : '/'} class="flex min-w-0 items-center gap-3" aria-label="DevActivity home">
             <span class="hanko h-10 w-10 shrink-0 text-sm rounded-[3px]" aria-hidden="true">DEV</span>
             <span class="min-w-0 leading-none">
               <span class="block truncate font-black tracking-tight text-base sm:text-lg">ACTIVITY</span>
-              <span class="block truncate text-[10px] sm:text-xs tracking-[0.25em] opacity-70">LEARN RUST IN PUBLIC</span>
+              <span class="block truncate text-[10px] sm:text-xs tracking-[0.25em] opacity-70">{t.tagline}</span>
             </span>
           </a>
           <div class="flex shrink-0 items-center gap-2">
             <nav class="hidden md:flex items-center gap-5 text-sm font-bold" aria-label="Primary">
-              <a href="/" class="hover:opacity-70">HOME</a>
-              <a href="/blog" class="hover:opacity-70">POSTS</a>
+              <a href={lang === 'id' ? '/id/' : '/'} class="hover:opacity-70">{t.navHome}</a>
+              <a href={lang === 'id' ? '/id/blog/' : '/blog/'} class="hover:opacity-70">{t.navPosts}</a>
               <a href="https://www.youtube.com/@devactivity" target="_blank" rel="noopener" class="hover:opacity-70">YOUTUBE</a>
               <a href="https://github.com/devactivity" target="_blank" rel="noopener" class="hover:opacity-70">GITHUB</a>
-              <a href="/rss.xml" class="hover:opacity-70">RSS</a>
+              <a href={lang === 'id' ? '/id/rss.xml' : '/rss.xml'} class="hover:opacity-70">RSS</a>
             </nav>
-            <ThemeToggle />
+            <span class="hidden md:flex shrink-0 items-center gap-1 text-sm font-bold" aria-label="Language">
+              {lang === 'en' ? (
+                <span class="rounded px-1.5 py-1 opacity-40" aria-current="true">EN</span>
+              ) : (
+                <a href={altPath ?? '/'} class="rounded px-1.5 py-1 hover:opacity-70" hreflang="en">EN</a>
+              )}
+              <span class="opacity-30" aria-hidden="true">|</span>
+              {lang === 'id' ? (
+                <span class="rounded px-1.5 py-1 opacity-40" aria-current="true">ID</span>
+              ) : (
+                <a href={altPath ?? '/id/'} class="rounded px-1.5 py-1 hover:opacity-70" hreflang="id">ID</a>
+              )}
+            </span>
+            <ThemeToggle darkLabel={t.themeDark} lightLabel={t.themeLight} />
             <button
               id="menu-toggle"
               type="button"
@@ -134,20 +162,34 @@ const websiteJsonLd = {
               aria-controls="mobile-menu"
               class="md:hidden border-2 border-current rounded px-3 py-1.5 text-sm font-bold"
             >
-              MENU
+              {t.menu}
             </button>
           </div>
         </div>
         <nav id="mobile-menu" class="hidden md:hidden mt-4 flex-col gap-1 text-sm font-bold border-t border-current/15 pt-3" aria-label="Mobile">
-          <a href="/" class="block rounded px-2 py-2 hover:opacity-70">HOME</a>
-          <a href="/blog" class="block rounded px-2 py-2 hover:opacity-70">POSTS</a>
+          <div class="flex items-center gap-1 px-2 py-2" aria-label="Language">
+            <span class="mr-2 text-xs font-bold uppercase tracking-[0.2em] opacity-50">Language</span>
+            {lang === 'en' ? (
+              <span class="rounded px-1.5 py-1 opacity-40" aria-current="true">EN</span>
+            ) : (
+              <a href={altPath ?? '/'} class="rounded px-1.5 py-1 hover:opacity-70" hreflang="en">EN</a>
+            )}
+            <span class="opacity-30" aria-hidden="true">|</span>
+            {lang === 'id' ? (
+              <span class="rounded px-1.5 py-1 opacity-40" aria-current="true">ID</span>
+            ) : (
+              <a href={altPath ?? '/id/'} class="rounded px-1.5 py-1 hover:opacity-70" hreflang="id">ID</a>
+            )}
+          </div>
+          <a href={lang === 'id' ? '/id/' : '/'} class="block rounded px-2 py-2 hover:opacity-70">{t.navHome}</a>
+          <a href={lang === 'id' ? '/id/blog/' : '/blog/'} class="block rounded px-2 py-2 hover:opacity-70">{t.navPosts}</a>
           <a href="https://www.youtube.com/@devactivity" target="_blank" rel="noopener" class="block rounded px-2 py-2 hover:opacity-70">YOUTUBE</a>
           <a href="https://github.com/devactivity" target="_blank" rel="noopener" class="block rounded px-2 py-2 hover:opacity-70">GITHUB</a>
-          <a href="/rss.xml" class="block rounded px-2 py-2 hover:opacity-70">RSS</a>
+          <a href={lang === 'id' ? '/id/rss.xml' : '/rss.xml'} class="block rounded px-2 py-2 hover:opacity-70">RSS</a>
         </nav>
       </header>
 
-      <LiveIndicator />
+      <LiveIndicator lang={lang} />
 
       <main class="min-w-0 py-8">
         <slot />
@@ -156,17 +198,17 @@ const websiteJsonLd = {
       <footer class="border-t-2 border-current py-6 mb-8">
         <div class="flex flex-col sm:flex-row flex-wrap items-start sm:items-end justify-between gap-4">
           <div class="min-w-0 text-sm">
-            <p class="font-black text-lg break-words">DEVACTIVITY - LEARN IN PUBLIC</p>
-            <p class="opacity-70 break-words">Not an expert, just a learner.</p>
+            <p class="font-black text-lg break-words">{t.footerTitle}</p>
+            <p class="opacity-70 break-words">{t.footerSub}</p>
           </div>
           <div class="text-left sm:text-right text-sm font-bold">
-            <p>2026</p>
-            <p class="opacity-60 font-normal">Rust notes, code, and videos</p>
+            <p>{t.footerNo} - {new Date().getFullYear()}</p>
+            <p class="opacity-60 font-normal">{t.footerNote}</p>
           </div>
         </div>
       </footer>
     </div>
-    <script is:inline>
+    <script is:inline define:vars={{ closeLabel: t.close, menuLabel: t.menu }}>
       const menuBtn = document.getElementById('menu-toggle');
       const menu = document.getElementById('mobile-menu');
       menuBtn?.addEventListener('click', () => {
@@ -174,7 +216,7 @@ const websiteJsonLd = {
         const nowHidden = menu.classList.toggle('hidden');
         menu.classList.toggle('flex', !nowHidden);
         menuBtn.setAttribute('aria-expanded', String(!nowHidden));
-        menuBtn.textContent = !nowHidden ? 'CLOSE' : 'MENU';
+        menuBtn.textContent = !nowHidden ? closeLabel : menuLabel;
       });
     </script>
   </body>

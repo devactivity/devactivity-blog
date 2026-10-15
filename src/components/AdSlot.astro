@@ -3,14 +3,15 @@ import { adsenseClient, slotConfigured } from '../site';
 
 interface Props {
   unit: string;
+  label?: string;
 }
 
-const { unit } = Astro.props;
+const { unit, label = 'Advertisement' } = Astro.props;
 const show = slotConfigured(unit);
 ---
 {show && (
-  <div class="ad-wrap my-8 min-w-0" role="complementary" aria-label="Advertisement">
-    <p class="mb-1 text-center text-[10px] font-bold uppercase tracking-[0.25em] opacity-40">Advertisement</p>
+  <div class="ad-wrap my-8 min-w-0" role="complementary" aria-label={label}>
+    <p class="mb-1 text-center text-[10px] font-bold uppercase tracking-[0.25em] opacity-40">{label}</p>
     <div class="min-h-[250px] overflow-hidden rounded border border-black/10 dark:border-white/10 bg-white/40 dark:bg-white/5">
       <ins
         class="adsbygoogle"

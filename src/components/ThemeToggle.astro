@@ -1,13 +1,20 @@
 ---
+interface Props {
+  darkLabel?: string;
+  lightLabel?: string;
+}
+const { darkLabel = 'DARK', lightLabel = 'LIGHT' } = Astro.props;
 ---
 <button
   id="theme-toggle"
   type="button"
   aria-label="Toggle dark mode"
   class="shrink-0 border-2 border-current rounded px-3 py-1.5 text-sm font-bold hover:opacity-70 transition-opacity"
+  data-dark-label={darkLabel}
+  data-light-label={lightLabel}
 >
-  <span class="hidden dark:inline">LIGHT</span>
-  <span class="dark:hidden">DARK</span>
+  <span class="hidden dark:inline">{lightLabel}</span>
+  <span class="dark:hidden">{darkLabel}</span>
 </button>
 <script is:inline>
   const btn = document.getElementById('theme-toggle');

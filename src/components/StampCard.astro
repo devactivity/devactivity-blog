@@ -1,16 +1,19 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { postUrl, slugOf, ui, type Lang } from '../i18n';
 
 interface Props {
   post: CollectionEntry<'blog'>;
+  lang?: Lang;
 }
 
-const { post } = Astro.props;
+const { post, lang = 'en' } = Astro.props;
+const t = ui[lang];
 const d = post.data.pubDate;
 const dateStr = d.toISOString().slice(0, 10);
 const hasVideo = Boolean(post.data.youtubeId || post.data.tiktokId);
 ---
-<a href={`/blog/${post.id.replace(/\.mdx?$/, '')}/`} class="block group min-w-0">
+<a href={postUrl(lang, slugOf(post.id))} class="block group min-w-0">
   <div class="stamp-frame rounded-[2px]">
     <div class="stamp-inner p-0 overflow-hidden dark:bg-[#17181c]">
       <div class="p-4 sm:p-5 min-w-0">
@@ -31,11 +34,11 @@ const hasVideo = Boolean(post.data.youtubeId || post.data.tiktokId);
         <div class="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-dashed border-current/20 pt-3 text-xs font-bold">
           <span class="min-w-0 break-words">
             {post.data.category ?? 'POST'} • {dateStr}
-            {hasVideo && <span class="ml-2 bg-ink text-paper dark:bg-paper dark:text-ink rounded-full px-2 py-0.5">VIDEO</span>}
+            {hasVideo && <span class="ml-2 bg-ink text-paper dark:bg-paper dark:text-ink rounded-full px-2 py-0.5">{t.videoBadge}</span>}
           </span>
           <span class="flex flex-wrap gap-1.5">
-            {(post.data.tags ?? []).slice(0, 3).map((t) => (
-              <span class="border border-current/30 rounded-full px-2 py-0.5 break-words">{t}</span>
+            {(post.data.tags ?? []).slice(0, 3).map((tag) => (
+              <span class="border border-current/30 rounded-full px-2 py-0.5 break-words">{tag}</span>
             ))}
           </span>
         </div>
