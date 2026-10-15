@@ -1,0 +1,152 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import YouTube from '../../components/YouTube.astro';
+import TikTok from '../../components/TikTok.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { adSlots } from '../../site';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id.replace(/\.mdx?$/, '') },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const date = post.data.pubDate.toISOString().slice(0, 10);
+const updated = post.data.updatedDate?.toISOString() ?? post.data.pubDate.toISOString();
+const slug = post.id.replace(/\.mdx?$/, '');
+const site = Astro.site ?? new URL('https://dev-blog.pages.dev');
+const url = new URL(`/blog/${slug}/`, site).toString();
+const ogImage = post.data.youtubeId
+  ? `https://i.ytimg.com/vi/${post.data.youtubeId}/hqdefault.jpg`
+  : '/favicon.svg';
+
+const author = {
+  '@type': 'Person',
+  name: 'devactivity',
+  url: 'https://github.com/devactivity',
+  sameAs: [
+    'https://www.youtube.com/@devactivity',
+    'https://github.com/devactivity',
+    'https://tiktok.com/@devreactivity',
+    'https://twitter.com/fndevactivity',
+    'https://www.instagram.com/devactivity/',
+  ],
+};
+
+const videos = [
+  ...(post.data.youtubeId
+    ? [{
+        '@type': 'VideoObject',
+        name: post.data.title,
+        description: post.data.description,
+        thumbnailUrl: `https://i.ytimg.com/vi/${post.data.youtubeId}/hqdefault.jpg`,
+        uploadDate: post.data.pubDate.toISOString(),
+        embedUrl: `https://www.youtube.com/embed/${post.data.youtubeId}`,
+        author,
+      }]
+    : []),
+  ...(post.data.tiktokId
+    ? [{
+        '@type': 'VideoObject',
+        name: post.data.title,
+        description: post.data.description,
+        uploadDate: post.data.pubDate.toISOString(),
+        embedUrl: `https://www.tiktok.com/embed/v2/${post.data.tiktokId}`,
+        author,
+      }]
+    : []),
+];
+
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  image: new URL(ogImage, site).toString(),
+  datePublished: post.data.pubDate.toISOString(),
+  dateModified: updated,
+  inLanguage: post.data.lang ?? 'en',
+  author,
+  publisher: {
+    '@type': 'Person',
+    name: 'devactivity',
+    url: 'https://github.com/devactivity',
+  },
+  mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+  keywords: (post.data.tags ?? []).join(', '),
+  ...(videos.length ? { hasPart: videos, video: videos[0] } : {}),
+};
+---
+
+<BaseLayout
+  title={`${post.data.title} - DevActivity`}
+  description={post.data.description}
+  canonicalPath={`/blog/${slug}/`}
+  ogType="article"
+  ogImage={ogImage}
+  publishedTime={post.data.pubDate.toISOString()}
+  modifiedTime={updated}
+  extraJsonLd={articleJsonLd}
+>
+  <article class="min-w-0">
+    <div class="stamp-frame min-w-0">
+      <div class="stamp-inner min-w-0 px-4 py-6 sm:px-6 sm:py-8 md:px-10 dark:bg-[#17181c]">
+        <p class="font-black text-ai dark:text-sky text-sm tracking-[0.25em] break-words">{post.data.category ?? 'POST'}</p>
+        <h1 class="font-display font-extrabold text-3xl sm:text-4xl md:text-5xl leading-tight mt-1 break-words">{post.data.title}</h1>
+        <p class="mt-3 opacity-80 max-w-2xl break-words">{post.data.description}</p>
+        <div class="mt-5 flex flex-wrap items-center gap-2 sm:gap-3 text-xs font-bold border-t-2 border-current pt-3">
+          <span class="break-words">{post.data.category ?? 'POST'} NO.{post.data.no ?? '00'}</span>
+          <time datetime={post.data.pubDate.toISOString()}>{date}</time>
+          <span class="flex flex-wrap gap-1.5">
+            {(post.data.tags ?? []).map((t) => (
+              <span class="border border-current/30 rounded-full px-2 py-0.5 break-words">#{t}</span>
+            ))}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    {(post.data.youtubeId || post.data.tiktokId) && (
+      post.data.youtubeId && post.data.tiktokId ? (
+        <div class="mt-8 grid min-w-0 gap-6 md:grid-cols-2">
+          <YouTube id={post.data.youtubeId} title={post.data.title} />
+          <TikTok id={post.data.tiktokId} caption={post.data.title} />
+        </div>
+      ) : post.data.youtubeId ? (
+        <div class="mt-8 min-w-0 mx-auto w-full max-w-3xl">
+          <YouTube id={post.data.youtubeId} title={post.data.title} />
+        </div>
+      ) : (
+        <div class="mt-8 min-w-0">
+          <TikTok id={post.data.tiktokId ?? ''} caption={post.data.title} />
+        </div>
+      )
+    )}
+
+    <AdSlot unit={adSlots.postTop} />
+
+    <div class="mt-8 grid min-w-0 md:grid-cols-[minmax(0,1fr)_56px] gap-8">
+      <div class="prose-stamp min-w-0 overflow-hidden bg-white/60 dark:bg-white/5 rounded p-4 sm:p-6 md:p-8 border border-black/10 dark:border-white/10">
+        <Content />
+      </div>
+      <aside class="hidden md:block">
+        <div class="tate font-bold text-sm opacity-70 h-64 border-l-2 border-dotted border-current/30 pl-2">
+          {date} - {post.data.title}
+        </div>
+        <div class="hanko w-10 h-10 mt-4 rounded-[3px] text-xs">DEV</div>
+      </aside>
+    </div>
+
+    <AdSlot unit={adSlots.postBottom} />
+
+    <div class="mt-8 flex flex-wrap gap-3 justify-between text-sm font-bold">
+      <a href="/blog" class="underline underline-offset-4 hover:opacity-70">BACK TO POSTS</a>
+      <a href="/" class="underline underline-offset-4 hover:opacity-70">HOME</a>
+    </div>
+  </article>
+</BaseLayout>

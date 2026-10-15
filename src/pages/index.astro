@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import StampCard from '../components/StampCard.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { adSlots } from '../site';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 6);
+---
+
+<BaseLayout title="DevActivity - Learn Rust in Public">
+  <section class="stamp-frame min-w-0">
+    <div class="stamp-inner min-w-0 px-4 py-6 sm:px-6 sm:py-8 md:px-10 dark:bg-[#17181c]">
+      <p class="font-black text-ai dark:text-sky text-4xl sm:text-6xl md:text-7xl tracking-tighter leading-none break-words">BUILD IN PUBLIC</p>
+      <h1 class="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl mt-2 break-words">Rust notes, code, and videos.</h1>
+      <p class="mt-4 max-w-2xl leading-relaxed opacity-80 break-words">
+        Not an expert, just a learner, step-by-step Rust related, apps, and tools.
+      </p>
+      <div class="mt-6 flex flex-wrap gap-3 text-sm font-bold">
+        <a href="/blog" class="bg-ink text-paper dark:bg-paper dark:text-ink px-4 py-2 rounded hover:opacity-80 transition-opacity">READ POSTS</a>
+        <a href="https://www.youtube.com/@devactivity" target="_blank" rel="noopener" class="border-2 border-current px-4 py-2 rounded hover:opacity-70 transition-opacity">YOUTUBE</a>
+        <a href="https://github.com/devactivity" target="_blank" rel="noopener" class="border-2 border-current px-4 py-2 rounded hover:opacity-70 transition-opacity">GITHUB</a>
+      </div>
+      <div class="mt-6 flex flex-wrap gap-2 justify-between text-xs font-bold border-t-2 border-current pt-3">
+        <span class="break-words">RUSTACEAN</span>
+        <span class="tabular-nums">2026</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-10 min-w-0">
+    <div class="flex flex-wrap gap-2 items-end justify-between mb-4">
+      <h2 class="font-black text-xl sm:text-2xl break-words">LATEST <span class="hanko text-xs px-2 py-1 rounded-[3px] ml-2">NEW</span></h2>
+      <a href="/blog" class="text-sm font-bold underline underline-offset-4 hover:opacity-70">VIEW ALL</a>
+    </div>
+    <div class="grid min-w-0 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      {posts.map((p) => <StampCard post={p} />)}
+    </div>
+  </section>
+
+  <AdSlot unit={adSlots.homeFeed} />
+
+  <section class="mt-10 grid min-w-0 md:grid-cols-3 gap-4 sm:gap-6 text-sm">
+    <div class="bg-white dark:bg-[#17181c] border border-black/10 dark:border-white/10 p-5 rounded">
+      <p class="font-black">ARTICLES</p>
+      <p class="opacity-75 mt-1">Long-form tutorials, technical notes, opinions, and guides. Organized by tags.</p>
+    </div>
+    <div class="bg-white dark:bg-[#17181c] border border-black/10 dark:border-white/10 p-5 rounded">
+      <p class="font-black">VIDEO CONTENTS</p>
+      <p class="opacity-75 mt-1">Sourced from my existing content, with thumbnails, descriptions, topics, and embedded playback.</p>
+    </div>
+    <div class="bg-white dark:bg-[#17181c] border border-black/10 dark:border-white/10 p-5 rounded">
+      <p class="font-black">CODE SNIPPETS</p>
+      <p class="opacity-75 mt-1">Share reusable code, practical examples, and technical solutions.</p>
+    </div>
+  </section>
+</BaseLayout>

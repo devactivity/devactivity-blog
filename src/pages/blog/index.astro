@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StampCard from '../../components/StampCard.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { adSlots } from '../../site';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+<BaseLayout title="Posts - DevActivity">
+  <h1 class="font-black text-3xl sm:text-4xl break-words">POSTS <span class="text-base font-bold opacity-60">{posts.length} total</span></h1>
+  <p class="mt-2 opacity-75 break-words">Rust learning notes with companion videos. Select a card to read.</p>
+  <div class="mt-6 grid min-w-0 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+    {posts.map((p) => <StampCard post={p} />)}
+  </div>
+
+  <AdSlot unit={adSlots.blogIndex} />
+</BaseLayout>
