@@ -1,0 +1,4 @@
+# Replace 0000000000000000 with AdSense publisher ID,
+# e.g. google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0
+# (AdSense > Account > Settings > Account information)
+google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
