@@ -29,7 +29,7 @@ const { Content } = await render(post);
 const slug = slugOf(post.id);
 const date = post.data.pubDate.toISOString().slice(0, 10);
 const updated = post.data.updatedDate?.toISOString() ?? post.data.pubDate.toISOString();
-const site = Astro.site ?? new URL('https://dev-blog.pages.dev');
+const site = Astro.site ?? new URL('https://devactivity-blog.pages.dev');
 const url = new URL(postUrl(lang, slug), site).toString();
 const ogImage = post.data.youtubeId
   ? `https://i.ytimg.com/vi/${post.data.youtubeId}/hqdefault.jpg`

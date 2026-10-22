@@ -2,7 +2,7 @@ import { getCollection } from 'astro:content';
 import { postUrl, slugOf } from '../i18n';
 
 export async function GET({ site }) {
-  const base = (site ?? new URL('https://dev-blog.pages.dev')).toString().replace(/\/$/, '');
+  const base = (site ?? new URL('https://devactivity-blog.pages.dev')).toString().replace(/\/$/, '');
   const all = (await getCollection('blog', ({ data }) => !data.draft))
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
   const section = (lang) => all

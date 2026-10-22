@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // NOTE: update `site` for deploy
 export default defineConfig({
-  site: 'https://dev-blog.pages.dev',
+  site: 'https://devactivity-blog.pages.dev',
   integrations: [mdx(), sitemap()],
   vite: {
     plugins: [tailwindcss()],

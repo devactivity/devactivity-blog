@@ -36,7 +36,7 @@ const {
 const t = ui[lang];
 const description = Astro.props.description ?? t.metaDesc;
 
-const site = Astro.site ?? new URL('https://dev-blog.pages.dev');
+const site = Astro.site ?? new URL('https://devactivity-blog.pages.dev');
 const canonical = new URL(canonicalPath ?? Astro.url.pathname, site).toString();
 const ogImageUrl = new URL(ogImage, site).toString();
 const altUrl = altPath ? new URL(altPath, site).toString() : null;
