@@ -1,6 +1,10 @@
 {
-  "checkedAt": "2026-10-14T09:29:54.430Z",
+  "checkedAt": "2026-10-22T08:24:53.365Z",
   "channelId": "UCyAnKNcVOr6SWJGIlHh6TMQ",
   "live": null,
-  "upcoming": null
+  "upcoming": {
+    "videoId": "8rclr0VsTVU",
+    "title": "Nyoba Bikin Peer-Wire dengan Rust - Part 4",
+    "url": "https://www.youtube.com/watch?v=8rclr0VsTVU"
+  }
 }
