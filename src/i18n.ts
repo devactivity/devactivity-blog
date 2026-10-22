@@ -55,7 +55,7 @@ const en = {
   adLabel: 'Advertisement',
   videoBadge: 'VIDEO',
   liveNow: 'LIVE NOW',
-  scheduled: 'SCHEDULED',
+  scheduled: 'LIVE SCHEDULED',
   soon: 'SOON',
   metaDesc:
     'DevActivity - learning Rust in public. Step-by-step Rust notes, code, and companion videos.',
@@ -108,7 +108,7 @@ const id: UIStrings = {
   adLabel: 'Iklan',
   videoBadge: 'VIDEO',
   liveNow: 'SEDANG LIVE',
-  scheduled: 'TERJADWAL',
+  scheduled: 'LIVE TERJADWAL',
   soon: 'SEGERA',
   metaDesc:
     'DevActivity - belajar Rust dengan terbuka. Catatan Rust langkah demi langkah, kode, dan video.',
