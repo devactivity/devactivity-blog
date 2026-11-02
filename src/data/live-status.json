@@ -1,6 +1,10 @@
 {
-  "checkedAt": "2026-11-01T23:55:40.830Z",
+  "checkedAt": "2026-11-02T05:18:23.902Z",
   "channelId": "UCyAnKNcVOr6SWJGIlHh6TMQ",
   "live": null,
-  "upcoming": null
+  "upcoming": {
+    "videoId": "LFyrYN7KjR8",
+    "title": "Konversi BitTorrent Piece ke Storage File dengan Rust - Part 5",
+    "url": "https://www.youtube.com/watch?v=LFyrYN7KjR8"
+  }
 }
