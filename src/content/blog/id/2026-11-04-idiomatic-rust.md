@@ -4,7 +4,7 @@ description: "Terima &str daripada &String sebagai argumen fungsi di Rust agar p
 pubDate: 2026-11-04
 tags: ["rust", "idiomatic-rust"]
 category: "SNIPPET"
-no: "10"
+no: "09"
 lang: "id"
 draft: false
 ---

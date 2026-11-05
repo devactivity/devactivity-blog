@@ -4,7 +4,7 @@ description: "Kode Rust yang unsound memungkinkan pemanggil yang menggunakan mod
 pubDate: 2026-11-03
 tags: ["rust", "unsafe,-unsound,-undefin"]
 category: "SNIPPET"
-no: "09"
+no: "08"
 lang: "id"
 draft: false
 ---

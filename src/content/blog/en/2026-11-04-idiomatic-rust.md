@@ -4,7 +4,7 @@ description: "Accept &str instead of &String in Rust function arguments to allow
 pubDate: 2026-11-04
 tags: ["rust", "idiomatic-rust"]
 category: "SNIPPET"
-no: "10"
+no: "09"
 lang: "en"
 draft: false
 ---

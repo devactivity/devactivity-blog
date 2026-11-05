@@ -4,7 +4,7 @@ description: "Unsound Rust code allows safe callers to trigger undefined behavio
 pubDate: 2026-11-03
 tags: ["rust", "unsafe,-unsound,-undefin"]
 category: "SNIPPET"
-no: "09"
+no: "08"
 lang: "en"
 draft: false
 ---
