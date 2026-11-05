@@ -1,0 +1,100 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { ui } from '../i18n';
+
+const lang = 'en' as const;
+const t = ui[lang];
+// Update this whenever the policy changes.
+const updated = '2026-11-05';
+---
+<BaseLayout title={`${t.privacyTitle} - DevActivity`} description={t.privacyDesc}
+  lang={lang} altPath="/id/privacy/" canonicalPath="/privacy/">
+  <article class="min-w-0">
+    <h1 class="font-black text-3xl sm:text-4xl break-words">{t.privacyTitle}</h1>
+    <p class="mt-2 text-sm opacity-70">Last updated: <time datetime={updated}>{updated}</time></p>
+
+    <div class="prose-stamp mt-6 min-w-0 bg-white/60 dark:bg-white/5 rounded p-4 sm:p-6 md:p-8 border border-black/10 dark:border-white/10">
+      <p>
+        DevActivity (<code>devactivity-blog.pages.dev</code>) is a personal blog run by devactivity.
+        This page explains what data is collected when you visit, and why.
+      </p>
+
+      <h2>Analytics (Google Analytics)</h2>
+      <ul>
+        <li>
+          The site uses Google Analytics 4, a service of Google, <strong>only after you select
+          Accept</strong> in the cookie banner. Until then no analytics script loads and no
+          analytics cookies are set.
+        </li>
+        <li>
+          It records the pages you view, the site that sent you, your device and browser type,
+          and your approximate location, which Google derives from your IP address. Google
+          Analytics 4 does not log or store IP addresses.
+        </li>
+        <li>
+          It sets the cookies <code>_ga</code> and <code>_ga_&lt;ID&gt;</code> to tell visits
+          apart. They expire after up to 2 years. Analytics data is kept for up to 14 months.
+        </li>
+        <li>
+          The only purpose is knowing which posts are read, so I can write more useful ones.
+          This data is not used for advertising and is not sold.
+        </li>
+        <li>
+          You can change your choice anytime with <strong>Cookie settings</strong> at the bottom
+          of every page. Declining removes the analytics cookies.
+        </li>
+      </ul>
+      <p>
+        Google's own policy: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>.
+      </p>
+
+      <h2>Stored in your browser</h2>
+      <p>
+        Two values are kept in your browser's local storage: <code>theme</code> (light or dark
+        mode) and <code>devactivity-consent-v1</code> (your cookie choice). They never leave
+        your device.
+      </p>
+
+      <h2>Third-party content</h2>
+      <ul>
+        <li>
+          <strong>Fonts</strong> load from Google Fonts. Your browser connects to Google's servers
+          to download them, which shares your IP address with Google.
+        </li>
+        <li>
+          <strong>Videos</strong> appear only on posts that include one. YouTube videos use the
+          privacy-enhanced <code>youtube-nocookie.com</code> player, and TikTok videos use
+          TikTok's player. These services receive your IP address and may set their own
+          cookies under their own policies.
+        </li>
+      </ul>
+
+      <h2>Hosting</h2>
+      <p>
+        The site is hosted on Cloudflare Pages. Cloudflare processes request data, including
+        your IP address, to deliver the site and protect it from abuse:
+        <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">cloudflare.com/privacypolicy</a>.
+      </p>
+
+      <h2>Advertising</h2>
+      <p>
+        The site shows no ads. If ads are added, this policy and the cookie banner will be
+        updated before they go live.
+      </p>
+
+      <h2>Your rights</h2>
+      <p>
+        Depending on where you live, for example under Indonesia's Personal Data Protection Law
+        (UU PDP, Law No. 27 of 2022) or the EU and UK GDPR, you can ask what data is held about
+        you, ask for it to be corrected or deleted, and withdraw your consent. Analytics data is
+        held by Google; withdrawing consent stops any further collection.
+      </p>
+
+      <h2>Contact</h2>
+      <p>
+        Questions about this policy: reach devactivity on
+        <a href="https://github.com/devactivity" target="_blank" rel="noopener">GitHub</a>.
+      </p>
+    </div>
+  </article>
+</BaseLayout>

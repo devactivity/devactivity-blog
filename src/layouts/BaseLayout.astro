@@ -2,8 +2,8 @@
 import '../styles/global.css';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import LiveIndicator from '../components/LiveIndicator.astro';
-import { adsConfigured, adsenseClient, googleSiteVerification } from '../site';
-import { ui, type Lang } from '../i18n';
+import { adsConfigured, adsenseClient, googleSiteVerification, analyticsConfigured, gaMeasurementId } from '../site';
+import { privacyUrl, ui, type Lang } from '../i18n';
 
 interface Props {
   title: string;
@@ -35,6 +35,12 @@ const {
 
 const t = ui[lang];
 const description = Astro.props.description ?? t.metaDesc;
+// GA only in production builds: `npm run dev` visits stay out of the stats
+const analyticsEnabled = analyticsConfigured && import.meta.env.PROD;
+// Where the visitor's Accept/Decline choice is kept, bump the suffix to ask
+// everyone again, e.g. after adding a new kind of tracking
+const consentKey = 'devactivity-consent-v1';
+const privacyHref = privacyUrl(lang);
 
 const site = Astro.site ?? new URL('https://devactivity-blog.pages.dev');
 const canonical = new URL(canonicalPath ?? Astro.url.pathname, site).toString();
@@ -112,6 +118,72 @@ const websiteJsonLd = {
       href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800;900&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    {analyticsEnabled && (
+      <script is:inline define:vars={{ gaMeasurementId, consentKey }}>
+        // Consent Mode v2, "basic" mode: everything is denied by default and
+        // gtag.js is only fetched once the visitor accepts, so nothing at all
+        // reaches Google before that, define:vars wraps this script in a
+        // function, so shared names go on window explicitly.
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function gtag() { window.dataLayer.push(arguments); };
+        window.gtag('consent', 'default', {
+          analytics_storage: 'denied',
+          ad_storage: 'denied',
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+        });
+        var loaded = false;
+        function choice() {
+          try { return localStorage.getItem(consentKey); } catch (e) { return null; }
+        }
+        function save(value) {
+          try { localStorage.setItem(consentKey, value); } catch (e) {}
+        }
+        function clearCookies() {
+          // _ga and _ga_<ID>, plus older GA names, on every domain form GA uses
+          document.cookie.split(';').forEach(function (part) {
+            var name = part.split('=')[0].trim();
+            if (!/^_g(a|id|at)/.test(name)) return;
+            var host = location.hostname;
+            ['', '; domain=' + host, '; domain=.' + host].forEach(function (domain) {
+              document.cookie = name + '=; Max-Age=0; path=/' + domain;
+            });
+          });
+        }
+        function load() {
+          if (loaded) return;
+          loaded = true;
+          // Consent is granted before config, so not even a cookieless ping
+          // is sent under the denied state
+          window.gtag('consent', 'update', { analytics_storage: 'granted' });
+          window.gtag('js', new Date());
+          window.gtag('config', gaMeasurementId);
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=' +
+            encodeURIComponent(gaMeasurementId);
+          document.head.appendChild(script);
+        }
+        window.__dvConsent = {
+          choice: choice,
+          grant: function () { save('granted'); load(); },
+          deny: function () {
+            var wasLoaded = loaded;
+            save('denied');
+            window.gtag('consent', 'update', { analytics_storage: 'denied' });
+            clearCookies();
+            // A loaded gtag.js cannot be unloaded: a reload starts clean.
+            if (wasLoaded) location.reload();
+          },
+        };
+        if (choice() === 'granted') {
+          load();
+        } else {
+          // Also removes cookies set before this banner existed
+          clearCookies();
+        }
+      </script>
+    )}
     {adsConfigured && (
       <script
         async
@@ -201,6 +273,14 @@ const websiteJsonLd = {
           <div class="min-w-0 text-sm">
             <p class="font-black text-lg break-words">{t.footerTitle}</p>
             <p class="opacity-70 break-words">{t.footerSub}</p>
+            <p class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs font-bold">
+              <a href={privacyHref} class="underline underline-offset-4 hover:opacity-70">{t.privacyLink}</a>
+              {analyticsEnabled && (
+                <button type="button" id="consent-settings" class="underline underline-offset-4 hover:opacity-70">
+                  {t.cookieSettings}
+                </button>
+              )}
+            </p>
           </div>
           <div class="text-left sm:text-right text-sm font-bold">
             <p>{t.footerNo} - {new Date().getFullYear()}</p>
@@ -209,6 +289,51 @@ const websiteJsonLd = {
         </div>
       </footer>
     </div>
+    {analyticsEnabled && (
+      <div
+        id="consent-banner"
+        hidden
+        role="region"
+        aria-label={t.consentLabel}
+        class="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-2xl rounded border-2 border-current bg-[var(--card-bg)] p-4 shadow-lg sm:inset-x-6"
+      >
+        <p class="text-sm leading-relaxed">
+          {t.consentText}{' '}
+          <a href={privacyHref} class="underline underline-offset-4 hover:opacity-70">{t.privacyTitle}</a>.
+        </p>
+        <div class="mt-3 flex flex-wrap gap-2 text-sm font-bold">
+          <!-- Same weight for both choices: declining is as easy as accepting. -->
+          <button type="button" data-consent="granted" class="border-2 border-current rounded px-4 py-1.5 hover:opacity-70">
+            {t.consentAccept}
+          </button>
+          <button type="button" data-consent="denied" class="border-2 border-current rounded px-4 py-1.5 hover:opacity-70">
+            {t.consentDecline}
+          </button>
+        </div>
+      </div>
+      <script is:inline>
+        (function () {
+          var consent = window.__dvConsent;
+          var banner = document.getElementById('consent-banner');
+          if (!consent || !banner) return;
+          if (!consent.choice()) banner.hidden = false;
+          banner.addEventListener('click', function (event) {
+            var button = event.target.closest('[data-consent]');
+            if (!button) return;
+            banner.hidden = true;
+            if (button.getAttribute('data-consent') === 'granted') consent.grant();
+            else consent.deny();
+          });
+          var settings = document.getElementById('consent-settings');
+          if (settings) {
+            settings.addEventListener('click', function () {
+              banner.hidden = false;
+              banner.querySelector('[data-consent]').focus();
+            });
+          }
+        })();
+      </script>
+    )}
     <script is:inline define:vars={{ closeLabel: t.close, menuLabel: t.menu }}>
       const menuBtn = document.getElementById('menu-toggle');
       const menu = document.getElementById('mobile-menu');

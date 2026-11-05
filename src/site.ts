@@ -8,6 +8,20 @@ export const siteName = 'DevActivity';
 // the content="..." value of the tag GSC, empty value renders nothing
 export const googleSiteVerification = 'ZJ_PzL4ObX-wOgvFPXx0LRWR2zD0agx62YdBSCdpKgI';
 
+// Google Analytics 4: the Measurement ID of the web data stream
+// (Admin > Data streams > stream), like 'G-ABC123DEF4', it's public,
+// not a secret, empty renders nothing
+export const gaMeasurementId = 'G-1QXVKW8RZJ';
+
+// A malformed ID would be interpolated into an inline script, so it fails
+// the build loudly instead of shipping a broken tag, the last good deploy
+// stays live meanwhile
+if (gaMeasurementId && !/^G-[A-Z0-9]{4,}$/.test(gaMeasurementId)) {
+  throw new Error(`site.ts: gaMeasurementId "${gaMeasurementId}" must look like G-ABC123DEF4`);
+}
+
+export const analyticsConfigured = gaMeasurementId !== '';
+
 // AdSense publisher ID like 'ca-pub-1234567890123456'
 export const adsenseClient = 'ca-pub-XXXXXXX';
 

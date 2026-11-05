@@ -18,6 +18,10 @@ export function homeUrl(lang: Lang): string {
   return lang === 'id' ? '/id/' : '/';
 }
 
+export function privacyUrl(lang: Lang): string {
+  return lang === 'id' ? '/id/privacy/' : '/privacy/';
+}
+
 const en = {
   tagline: 'LEARN RUST IN PUBLIC',
   navHome: 'HOME',
@@ -52,6 +56,15 @@ const en = {
   footerSub: 'Not an expert, just a learner.',
   footerNo: 'V0.0.1',
   footerNote: 'Rust notes, code, and videos',
+  privacyLink: 'PRIVACY',
+  privacyTitle: 'Privacy Policy',
+  privacyDesc: 'How DevActivity handles analytics, cookies, and third-party content.',
+  cookieSettings: 'COOKIE SETTINGS',
+  consentLabel: 'Cookie consent',
+  consentText:
+    'This site uses Google Analytics cookies to see which posts are read. They are only set if you accept, and you can change your choice anytime.',
+  consentAccept: 'Accept',
+  consentDecline: 'Decline',
   adLabel: 'Advertisement',
   videoBadge: 'VIDEO',
   liveNow: 'LIVE NOW',
@@ -93,7 +106,6 @@ const id: UIStrings = {
   feat2t: 'KONTEN VIDEO',
   feat2d: 'Sumber dari konten yg pernah dibuat, disertai gambar, deskripsi, topik dan pemutar video.',
   feat3t: 'POTONGAN KODE',
-  feat3d: 'Push ke GitHub, Cloudflare Pages membangun otomatis. Tanpa server, tanpa biaya.',
   feat3d: 'Berbagi kode-kode kecil, contoh praktikal, dan solusi teknis.',
   blogTitle: 'ARTIKEL',
   blogTotal: 'total',
@@ -105,6 +117,15 @@ const id: UIStrings = {
     'Bukan ahli, hanya belajar.',
   footerNo: 'V0.0.1',
   footerNote: 'Catatan, kode, dan video Rust',
+  privacyLink: 'PRIVASI',
+  privacyTitle: 'Kebijakan Privasi',
+  privacyDesc: 'Cara DevActivity menangani analitik, cookie, dan konten pihak ketiga.',
+  cookieSettings: 'PENGATURAN COOKIE',
+  consentLabel: 'Persetujuan cookie',
+  consentText:
+    'Situs ini memakai cookie Google Analytics untuk mengetahui artikel mana yang dibaca. Cookie hanya dipasang jika Anda setuju, dan pilihan bisa diubah kapan saja.',
+  consentAccept: 'Setuju',
+  consentDecline: 'Tolak',
   adLabel: 'Iklan',
   videoBadge: 'VIDEO',
   liveNow: 'SEDANG LIVE',

@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { ui } from '../../i18n';
+
+const lang = 'id' as const;
+const t = ui[lang];
+// Ubah tanggal ini setiap kali kebijakan berubah
+const updated = '2026-11-05';
+---
+<BaseLayout title={`${t.privacyTitle} - DevActivity`} description={t.privacyDesc}
+  lang={lang} altPath="/privacy/" canonicalPath="/id/privacy/">
+  <article class="min-w-0">
+    <h1 class="font-black text-3xl sm:text-4xl break-words">{t.privacyTitle}</h1>
+    <p class="mt-2 text-sm opacity-70">Terakhir diperbarui: <time datetime={updated}>{updated}</time></p>
+
+    <div class="prose-stamp mt-6 min-w-0 bg-white/60 dark:bg-white/5 rounded p-4 sm:p-6 md:p-8 border border-black/10 dark:border-white/10">
+      <p>
+        DevActivity (<code>devactivity-blog.pages.dev</code>) adalah blog pribadi yang dikelola
+        oleh devactivity. Halaman ini menjelaskan data apa yang dikumpulkan saat Anda berkunjung,
+        dan untuk apa.
+      </p>
+
+      <h2>Analitik (Google Analytics)</h2>
+      <ul>
+        <li>
+          Situs ini memakai Google Analytics 4, layanan dari Google, <strong>hanya setelah Anda
+          memilih Setuju</strong> pada banner cookie. Sebelum itu, tidak ada skrip analitik yang
+          dimuat dan tidak ada cookie analitik yang dipasang.
+        </li>
+        <li>
+          Yang dicatat adalah halaman yang Anda lihat, situs yang mengarahkan Anda ke sini, jenis
+          perangkat dan browser, serta perkiraan lokasi yang diturunkan Google dari alamat IP
+          Anda. Google Analytics 4 tidak mencatat atau menyimpan alamat IP.
+        </li>
+        <li>
+          Cookie <code>_ga</code> dan <code>_ga_&lt;ID&gt;</code> dipasang untuk membedakan
+          kunjungan. Cookie ini kedaluwarsa paling lama setelah 2 tahun. Data analitik disimpan
+          paling lama 14 bulan.
+        </li>
+        <li>
+          Tujuannya hanya untuk mengetahui artikel mana yang dibaca, agar saya bisa menulis
+          artikel yang lebih berguna. Data ini tidak dipakai untuk iklan dan tidak dijual.
+        </li>
+        <li>
+          Anda bisa mengubah pilihan kapan saja lewat <strong>Pengaturan cookie</strong> di bagian
+          bawah setiap halaman. Menolak akan menghapus cookie analitik.
+        </li>
+      </ul>
+      <p>
+        Kebijakan Google sendiri: <a href="https://policies.google.com/privacy?hl=id" target="_blank" rel="noopener">policies.google.com/privacy</a>.
+      </p>
+
+      <h2>Disimpan di browser Anda</h2>
+      <p>
+        Dua nilai disimpan di local storage browser Anda: <code>theme</code> (mode terang atau
+        gelap) dan <code>devactivity-consent-v1</code> (pilihan cookie Anda). Keduanya tidak
+        pernah dikirim ke mana pun.
+      </p>
+
+      <h2>Konten pihak ketiga</h2>
+      <ul>
+        <li>
+          <strong>Font</strong> dimuat dari Google Fonts. Browser Anda terhubung ke server Google
+          untuk mengunduhnya, sehingga alamat IP Anda diterima oleh Google.
+        </li>
+        <li>
+          <strong>Video</strong> hanya muncul pada artikel yang menyertakannya. Video YouTube
+          memakai pemutar <code>youtube-nocookie.com</code> yang lebih menjaga privasi, dan video
+          TikTok memakai pemutar TikTok. Layanan ini menerima alamat IP Anda dan dapat memasang
+          cookie sendiri sesuai kebijakan mereka.
+        </li>
+      </ul>
+
+      <h2>Hosting</h2>
+      <p>
+        Situs ini di-hosting di Cloudflare Pages. Cloudflare memproses data permintaan, termasuk
+        alamat IP Anda, untuk menyajikan situs dan melindunginya dari penyalahgunaan:
+        <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener">cloudflare.com/privacypolicy</a>.
+      </p>
+
+      <h2>Iklan</h2>
+      <p>
+        Situs ini tidak menampilkan iklan. Jika iklan ditambahkan, kebijakan ini dan banner
+        cookie akan diperbarui sebelum iklan tayang.
+      </p>
+
+      <h2>Hak Anda</h2>
+      <p>
+        Sesuai Undang-Undang Pelindungan Data Pribadi (UU PDP, UU No. 27 Tahun 2022), dan GDPR
+        bagi pengunjung dari Uni Eropa dan Inggris, Anda berhak menanyakan data apa yang disimpan
+        tentang Anda, meminta data diperbaiki atau dihapus, dan menarik persetujuan. Data analitik
+        disimpan oleh Google; menarik persetujuan menghentikan pengumpulan selanjutnya.
+      </p>
+
+      <h2>Kontak</h2>
+      <p>
+        Pertanyaan tentang kebijakan ini: hubungi devactivity lewat
+        <a href="https://github.com/devactivity" target="_blank" rel="noopener">GitHub</a>.
+      </p>
+    </div>
+  </article>
+</BaseLayout>
