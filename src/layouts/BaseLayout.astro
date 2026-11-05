@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import LiveIndicator from '../components/LiveIndicator.astro';
-import { adsConfigured, adsenseClient } from '../site';
+import { adsConfigured, adsenseClient, googleSiteVerification } from '../site';
 import { ui, type Lang } from '../i18n';
 
 interface Props {
@@ -76,6 +76,7 @@ const websiteJsonLd = {
     {idUrl && <link rel="alternate" hreflang="id" href={idUrl} />}
     {enUrl && <link rel="alternate" hreflang="x-default" href={enUrl} />}
     <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large'} />
+    {googleSiteVerification && <meta name="google-site-verification" content={googleSiteVerification} />}
     <meta name="author" content="devactivity" />
     <meta name="theme-color" content="#faf6ec" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0e0f11" media="(prefers-color-scheme: dark)" />

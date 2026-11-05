@@ -4,6 +4,10 @@
 
 export const siteName = 'DevActivity';
 
+// Google Search Console, URL-prefix property, "HTML tag" method: paste only
+// the content="..." value of the tag GSC, empty value renders nothing
+export const googleSiteVerification = '1w4jEfnMrUrXYZh23pdhhwgkqMbC6kfCTa2h7_ZZQgQ';
+
 // AdSense publisher ID like 'ca-pub-1234567890123456'
 export const adsenseClient = 'ca-pub-XXXXXXX';
 
