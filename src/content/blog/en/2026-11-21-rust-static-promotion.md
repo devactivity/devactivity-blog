@@ -22,7 +22,7 @@ fn static_number() -> &'static i32 {
 }
 ```
 
-This looks equivalent, but `n` is a local binding. Returning `&n` would let the caller observe a value after the function's local storage has ended, so Rust rejects the borrow with a “borrowed value does not live long enough” error. The lifetime in the signature is a promise to the compiler, not a command to keep locals alive.
+This looks equivalent, but `n` is a local binding. Returning `&n` would let the caller observe a value after the function's local storage has ended, so Rust rejects the borrow with a "borrowed value does not live long enough" error. The lifetime in the signature is a promise to the compiler, not a command to keep locals alive.
 
 The same rule applies when the value is only borrowed locally:
 
